@@ -1,0 +1,54 @@
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('Download source')
+        {
+            steps {
+                script {
+                    res = sh(script: "test -d /home/source/MF.AppCatalog && echo '1' || echo '0' ", returnStdout: true).trim()
+                    if(res=='1'){
+                        sh 'rm -R /home/source/MF.AppCatalog'
+                    }
+                }
+
+				sh 'git clone https://github.com/mistek131995/Freedom.MF.AppCatalog.git /home/source/MF.AppCatalog'
+            }
+        }
+        stage('Build image')
+        {
+            steps {
+				sh 'docker build -t mf.app_catalog.${BUILD_NUMBER} /home/source/MF.AppCatalog'
+            }
+        }
+        stage('Stop container')
+        {
+            steps {
+                script{
+                    def containerId = sh (script: 'docker ps -q -f name=mf.app_catalog', returnStdout: true)
+
+                    if(containerId != ''){
+                        sh "docker stop ${containerId}"
+                    }
+                }
+            }
+        }
+        stage('Run container')
+        {
+            steps {
+				sh 'docker run -d -p 80:81 --name=mf.container.${BUILD_NUMBER} --restart=always mf.app_catalog.${BUILD_NUMBER}'
+            }
+        }
+        stage('Clear images') {
+            steps {
+                sh "docker system prune -af"
+            }
+        }
+        stage('Delete source') {
+            steps {
+                sh 'rm -R /home/source/MF.AppCatalog'
+            }
+        }
+    }
+}
