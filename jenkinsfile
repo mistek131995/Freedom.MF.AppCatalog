@@ -37,7 +37,7 @@ pipeline
         stage('Run container')
         {
             steps {
-				sh 'docker run -d -p 80:81 --name=mf.container.${BUILD_NUMBER} --restart=always mf.app_catalog.${BUILD_NUMBER}'
+				sh 'docker run -d -p 81:80 --name=mf.container.${BUILD_NUMBER} --restart=always mf.app_catalog.${BUILD_NUMBER}'
             }
         }
         stage('Clear images') {
