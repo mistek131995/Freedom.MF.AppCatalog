@@ -9,9 +9,9 @@ export default defineConfig({
       federation({
         name: "catalog-components",
         filename: "remoteEntry.js",
-        exposes: [
-
-        ],
+        exposes: {
+            "./AppCategories" : "./src/components/app-categories/AppCategories.tsx"
+        },
         shared: [
             "react"
         ]
