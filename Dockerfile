@@ -5,7 +5,7 @@ COPY . .
 
 RUN apt update && apt -y install nginx && apt -y install nano
 RUN npm install && npm run build
-RUN rm -R /etc/nginx/sites-available/default && mv -f ./nginx.conf /etc/nginx/sites-available
+RUN mv -f ./nginx.conf /etc/nginx/sites-available #&& rm -R /etc/nginx/sites-available/default
 
 EXPOSE 81
 
